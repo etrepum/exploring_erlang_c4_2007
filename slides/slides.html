@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>Exploring Erlang</title>
+<meta name="author" content="Bob Ippolito" />
+<meta name="date" content="August 2007" />
+<style type="text/css">
+
+/*
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Date: $Date: 2005-12-18 01:56:14 +0100 (Sun, 18 Dec 2005) $
+:Revision: $Revision: 4224 $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin-left: 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left {
+  clear: left }
+
+img.align-right {
+  clear: right }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em ;
+  background-color: #eeeeee }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+tt.docutils {
+  background-color: #eeeeee }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/mochikit/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/mochikit/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/mochikit/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/mochikit/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/mochikit/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>Exploring Erlang</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">Exploring Erlang</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Bob Ippolito</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>August 2007</td></tr>
+<tr class="field"><th class="docinfo-name">Venue:</th><td class="field-body">C4[1]</td>
+</tr>
+</tbody>
+</table>
+<!-- Definitions of interpreted text roles (classes) for S5/HTML data. -->
+<!-- This data file has been placed in the public domain. -->
+<!-- Colours
+======= -->
+<!-- Text Sizes
+========== -->
+<!-- Display in Slides (Presentation Mode) Only
+========================================== -->
+<!-- Display in Outline Mode Only
+============================ -->
+<!-- Display in Print Only
+===================== -->
+<!-- Incremental Display
+=================== -->
+<script type="text/javascript">
+    addLoadEvent(function () {
+        appendChildNodes(document.body,
+            DIV({id: "mochikit_logo", 'class': 'draggable'}));
+    });
+</script>
+
+</div>
+<div class="slide" id="what-s-erlang">
+<h1>What's Erlang?</h1>
+<ul class="simple">
+<li>Functional</li>
+<li>Process-oriented</li>
+<li>Scalable</li>
+<li>Distributed</li>
+<li>Highly reliable</li>
+</ul>
+</div>
+<div class="slide" id="erlang-at-mochi-media">
+<h1>Erlang at Mochi Media</h1>
+<p>MochiAds, MochiBot</p>
+<ul class="simple">
+<li>High-performance HTTP servers</li>
+<li>Ad targeting</li>
+<li>Real-time analytics</li>
+<li>Lots of internal use</li>
+</ul>
+</div>
+<div class="slide" id="maybe-you-ve-seen-our-ads">
+<h1>Maybe you've seen our ads?</h1>
+<img alt="images/im-in-ur-maze.jpg" src="images/im-in-ur-maze.jpg" />
+</div>
+<div class="slide" id="functional">
+<h1>Functional</h1>
+<ul class="simple">
+<li>No mutable data structures</li>
+<li>Lots of <em>linked</em> lists</li>
+<li>All state is on the stack</li>
+<li>Accumulators</li>
+<li>Tail-calls</li>
+<li>Pattern matching</li>
+</ul>
+</div>
+<div class="slide" id="collections">
+<h1>Collections</h1>
+<dl class="docutils">
+<dt>list:</dt>
+<dd>linked list: [1, 2, 3] = [1 | [2, 3]]</dd>
+<dt>tuple:</dt>
+<dd>{fixed_size, array, of, stuff}</dd>
+</dl>
+</div>
+<div class="slide" id="basic-types">
+<h1>Basic Types</h1>
+<dl class="docutils">
+<dt>atom:</dt>
+<dd>effectively a constant string, also seen 'quoted'</dd>
+<dt>binary:</dt>
+<dd>&lt;&lt;&quot;contiguous chunk of bytes&quot;, 9999:64/little&gt;&gt;</dd>
+<dt>integer, float:</dt>
+<dd>unbounded integers, 64-bit floating point</dd>
+<dt>ref:</dt>
+<dd>unique reference</dd>
+</dl>
+</div>
+<div class="slide" id="other-erlang-data-types">
+<h1>Other Erlang Data Types</h1>
+<dl class="docutils">
+<dt>fun:</dt>
+<dd>function reference,
+can be sent to other processes or serialized</dd>
+<dt>pid:</dt>
+<dd>reference to a process, maybe on another node</dd>
+<dt>port:</dt>
+<dd>reference to a driver, socket, pipe, etc. Similar to pid</dd>
+</dl>
+</div>
+<div class="slide" id="not-erlang-types">
+<h1>Not Erlang Types</h1>
+<dl class="docutils">
+<dt>boolean:</dt>
+<dd>true, false (atoms)</dd>
+<dt>character:</dt>
+<dd>$c = 99</dd>
+<dt>string:</dt>
+<dd>&quot;abc&quot; = [$a, $b, $c] = [97, 98, 99]</dd>
+</dl>
+</div>
+<div class="slide" id="variables">
+<h1>Variables</h1>
+<ul class="simple">
+<li>Variables Start With A Capital Letter</li>
+<li>Single Assignment</li>
+<li>Assignment by <em>pattern match</em></li>
+</ul>
+</div>
+<div class="slide" id="simple-pattern-matching">
+<h1>Simple Pattern Matching</h1>
+<pre class="literal-block">
+A = some_atom,
+B = some_atom,
+
+A = B,
+
+{some_atom, some_atom} = {A, B},
+
+%% _ (underscore) matches anything
+{A, _} = {some_atom, has_a_bucket},
+
+%% Next line will fail with a bad match
+A = another_atom.
+</pre>
+</div>
+<div class="slide" id="multiple-clauses-guards">
+<h1>Multiple Clauses, Guards</h1>
+<pre class="literal-block">
+case date() of
+
+    {2007, 8, N} when N &gt;= 10, N =&lt; 12 -&gt;
+        c4_1;
+
+    {2006, 10, N} when N == 20; N == 21 -&gt;
+        c4_0;
+
+    _ -&gt;
+        not_c4
+
+end.
+</pre>
+</div>
+<div class="slide" id="bit-syntax">
+<h1>Bit Syntax</h1>
+<pre class="literal-block">
+&lt;&lt;Bits:5, _:3, _/binary&gt;&gt; = Binary,
+
+Padding = (8 - ((5 + Bits * 4) band 7)),
+
+&lt;&lt;Bits:5,
+  0:Bits, Width:Bits/signed,
+  0:Bits, Height:Bits/signed,
+  _:Padding,
+  FrameRate:16/little,
+  FrameCount:16/little&gt;&gt; = Binary.
+</pre>
+</div>
+<div class="slide" id="punctuation">
+<h1>Punctuation?!</h1>
+<dl class="docutils">
+<dt>comma ( , ):</dt>
+<dd>Delimits expressions</dd>
+<dt>semicolon ( ; ):</dt>
+<dd>Delimits clauses</dd>
+<dt>period ( . ):</dt>
+<dd>Ends the <em>last</em> (or only) clause</dd>
+</dl>
+</div>
+<div class="slide" id="syntax-is-different">
+<h1>Syntax is... different</h1>
+<img alt="images/128297985360157500xcusemeyoug.jpg" src="images/128297985360157500xcusemeyoug.jpg" />
+</div>
+<div class="slide" id="integer-accumulator-js">
+<h1>Integer Accumulator (JS)</h1>
+<pre class="literal-block">
+function sum(list) {
+    var acc = 0;
+    for (var i = 0; i &lt; list.length; i++) {
+        acc += list[i];
+    }
+    return acc;
+}
+</pre>
+</div>
+<div class="slide" id="bad-integer-accumulator">
+<h1>Bad Integer Accumulator</h1>
+<pre class="literal-block">
+sum([]) -&gt;
+    0;
+sum([N | Rest]) -&gt;
+    %% Not a tail call.
+    N + sum(Rest).
+</pre>
+<p>Shouldn't do this - use tail calls instead.</p>
+</div>
+<div class="slide" id="integer-accumulator">
+<h1>Integer Accumulator</h1>
+<pre class="literal-block">
+sum(L) -&gt;
+    sum(L, 0).
+
+sum([N | Rest], Acc) -&gt;
+    sum(Rest, N + Acc);
+sum([], Acc) -&gt;
+    Acc.
+</pre>
+<p>Better:</p>
+<pre class="literal-block">
+lists:sum(L)
+</pre>
+</div>
+<div class="slide" id="list-accumulator-js">
+<h1>List Accumulator (JS)</h1>
+<pre class="literal-block">
+function seq(min, max) {
+    var acc = [];
+    for (var i = min; i &lt;= max; i++) {
+        acc.push(i);
+    }
+    return acc;
+}
+</pre>
+</div>
+<div class="slide" id="list-accumulator">
+<h1>List Accumulator</h1>
+<pre class="literal-block">
+seq(Min, Max) -&gt;
+    seq(Min, Max, []).
+
+seq(N, Max, Acc) when N =&lt; Max -&gt;
+    seq(1 + N, Max, [N | Acc]);
+seq(_N, _Max, Acc) -&gt;
+    lists:reverse(Acc).
+</pre>
+<p>Better:</p>
+<pre class="literal-block">
+lists:seq(Min, Max)
+</pre>
+</div>
+<div class="slide" id="modules">
+<h1>Modules</h1>
+<ul class="simple">
+<li>Flat namespace</li>
+<li>Explicit export of &quot;public&quot; functions</li>
+<li>Referenced by name (atom)</li>
+<li>Compiled to &quot;.beam&quot; file</li>
+<li>Can be reloaded in a running node</li>
+</ul>
+</div>
+<div class="slide" id="trivial-module">
+<h1>Trivial Module</h1>
+<pre class="literal-block">
+-module(c4).
+-export([hello_world/0]).
+
+%% Call this with c4:hello_world().
+hello_world() -&gt;
+    hello_world.
+</pre>
+</div>
+<div class="slide" id="compiling-from-the-shell">
+<h1>Compiling from the shell</h1>
+<pre class="literal-block">
+1&gt; c(c4).
+{ok,c4}
+
+2&gt; c4:hello_world().
+hello_world
+</pre>
+</div>
+<div class="slide" id="compile-everything">
+<h1>Compile everything</h1>
+<pre class="literal-block">
+1&gt; make:all([load]).
+Recompile: c4
+up_to_date
+
+2&gt; c4:hello_world().
+hello_world
+</pre>
+</div>
+<div class="slide" id="processes">
+<h1>Processes</h1>
+<ul class="simple">
+<li>Cheap (not an OS process or pthread!)</li>
+<li>Communicate only with <em>async</em> messages</li>
+<li>Selective receive</li>
+<li>Keeps state</li>
+</ul>
+</div>
+<div class="slide" id="creating-a-process-server">
+<h1>Creating a process (Server)</h1>
+<pre class="literal-block">
+-module(c4_adder).
+-export([start/0, loop/1, add/2]).
+
+start() -&gt; spawn(?MODULE, loop, [0]).
+</pre>
+</div>
+<div class="slide" id="creating-a-process-api">
+<h1>Creating a process (API)</h1>
+<pre class="literal-block">
+add(N, Pid) -&gt;
+    Pid ! {{add, N}, self()},
+    receive
+        {add_result, Result} -&gt;
+            {ok, Result}
+    after
+         10 -&gt;
+            {error, timeout}
+    end.
+</pre>
+</div>
+<div class="slide" id="creating-a-process-guts">
+<h1>Creating a process (Guts)</h1>
+<pre class="literal-block">
+loop(Count) -&gt;
+    receive
+        {{add, N}, Sender} -&gt;
+            Sender ! {add_result, N + Count},
+            ?MODULE:loop(N + Count);
+        Unknown -&gt;
+            io:format(&quot;UNKNOWN: ~p~n&quot;,
+                      [Unknown]),
+            ?MODULE:loop(N + Count)
+    end.
+</pre>
+</div>
+<div class="slide" id="creating-a-process-example">
+<h1>Creating a process (Example)</h1>
+<pre class="literal-block">
+1&gt; Adder = c4_adder:start().
+&lt;0.35.0&gt;
+
+2&gt; c4_adder:add(10, Adder).
+{ok,10}
+
+3&gt; Adder ! unexpected_message.
+unexpected_message
+UNKNOWN: unexpected_message
+
+4&gt; c4_adder:add(20, Adder).
+{ok,30}
+</pre>
+</div>
+<div class="slide" id="registered-processes">
+<h1>Registered Processes</h1>
+<pre class="literal-block">
+1&gt; register(my_adder, c4_adder:start()).
+true
+
+2&gt; whereis(my_adder).
+&lt;0.35.0&gt;
+
+3&gt; c4_adder:add(10, my_adder).
+{ok,10}
+
+4&gt; exit(whereis(my_adder), kill).
+true
+</pre>
+</div>
+<div class="slide" id="distributed">
+<h1>Distributed</h1>
+<ul class="simple">
+<li>Nodes can talk to each other</li>
+<li>If they have a shared secret (cookie)</li>
+<li>Same semantics as local communication</li>
+</ul>
+</div>
+<div class="slide" id="multiple-nodes">
+<h1>Multiple Nodes</h1>
+<img alt="images/we-await-ur-instrucsions.jpg" src="images/we-await-ur-instrucsions.jpg" />
+</div>
+<div class="slide" id="starting-multiple-nodes">
+<h1>Starting Multiple Nodes</h1>
+<pre class="literal-block">
+$ erl -name bob&#64;127.0.0.1 -cookie secret
+
+1&gt; register(adder, c4_adder:start()).
+true
+2&gt; c4_adder:add(10, adder).
+{ok,10}
+
+$ erl -name alice&#64;127.0.0.1 -cookie secret
+
+1&gt; c4_adder:add(10, {adder, 'bob&#64;127.0.0.1'}).
+{ok,20}
+</pre>
+</div>
+<div class="slide" id="monitoring-processes">
+<h1>Monitoring Processes</h1>
+<img alt="images/error-reboot-plz.jpg" src="images/error-reboot-plz.jpg" />
+</div>
+<div class="slide" id="monitoring-processes-example">
+<h1>Monitoring Processes (Example)</h1>
+<pre class="literal-block">
+1&gt; register(my_adder, c4_adder:start()).
+true
+
+2&gt; Mon = erlang:monitor(process, my_adder).
+#Ref&lt;0.0.0.117&gt;
+
+3&gt; exit(whereis(my_adder), kill).
+true
+
+4&gt; receive Msg -&gt; io:format(&quot;~p~n&quot;, [Msg]) end.
+{'DOWN', #Ref&lt;0.0.0.117&gt;, process,
+ {my_adder, nonode&#64;nohost}, killed}
+ok
+</pre>
+</div>
+<div class="slide" id="linked-processes">
+<h1>Linked Processes</h1>
+<ul class="simple">
+<li>Use spawn_link instead of spawn</li>
+<li>If <em>either</em> process dies, the other exits</li>
+<li>... but process_flag(trap_exit, true) makes it a
+message, similar to monitoring</li>
+</ul>
+</div>
+<div class="slide" id="high-reliability">
+<h1>High-reliability</h1>
+<ul class="simple">
+<li>Typical Erlang programs use the OTP framework</li>
+<li>Designed for telecom</li>
+<li>If something fails, restart it</li>
+</ul>
+</div>
+<div class="slide" id="supervisors">
+<h1>Supervisors</h1>
+<ul class="simple">
+<li>OTP-based applications are a tree of supervisors</li>
+<li>Supervisors start, monitor, and restart child processes</li>
+<li>Child processes may also be supervisors</li>
+</ul>
+</div>
+<div class="slide" id="supervisor-tree-diagram">
+<h1>Supervisor Tree (Diagram)</h1>
+<img alt="images/i-has-minions.jpg" src="images/i-has-minions.jpg" />
+</div>
+<div class="slide" id="behaviours">
+<h1>Behaviours</h1>
+<ul class="simple">
+<li>Other processes are mostly gen_* behaviours</li>
+<li>Behaviours are just a compile-time check for a given callback API</li>
+</ul>
+</div>
+<div class="slide" id="gen-server-adder-api">
+<h1>gen_server adder (API)</h1>
+<pre class="literal-block">
+-module(c4_adder_otp).
+-behaviour(gen_server).
+-export([start/0, add/2, stop/1]).
+-export([init/1, terminate/2,
+         handle_cast/2, handle_call/3]).
+
+start() -&gt;
+    gen_server:start_link(?MODULE, 0, []).
+
+add(N, Pid) -&gt;
+    gen_server:call(Pid, {add, N}).
+
+stop(Pid) -&gt; gen_server:cast(Pid, stop).
+</pre>
+</div>
+<div class="slide" id="gen-server-adder-guts">
+<h1>gen_server adder (Guts)</h1>
+<pre class="literal-block">
+init(Count) -&gt;
+    {ok, Count}.
+
+terminate(_Reason, _Count) -&gt;
+    ok.
+
+handle_cast(stop, Count) -&gt;
+    {stop, normal, Count}.
+
+handle_call({add, N}, _From, Count) -&gt;
+    {reply, N + Count, N + Count}.
+</pre>
+</div>
+<div class="slide" id="gen-server-adder-example">
+<h1>gen_server adder (Example)</h1>
+<pre class="literal-block">
+1&gt; {ok, Adder} = c4_adder_otp:start().
+{ok,&lt;0.35.0&gt;}
+
+2&gt; c4_adder_otp:add(10, Adder).
+10
+3&gt; c4_adder_otp:add(10, Adder).
+20
+
+4&gt; c4_adder_otp:stop(Adder).
+ok
+</pre>
+</div>
+<div class="slide" id="demo-time">
+<h1>Demo Time</h1>
+<img alt="images/uninterested.jpg" src="images/uninterested.jpg" />
+</div>
+<div class="slide" id="more-information">
+<h1>More Information</h1>
+<ul class="simple">
+<li><a class="reference" href="http://undefined.org/c4-1/">http://undefined.org/c4-1/</a> (Slides, Code)</li>
+<li><a class="reference" href="http://www.erlang.org/">erlang.org</a></li>
+<li><a class="reference" href="http://www.pragmaticprogrammer.com/titles/jaerlang/">Programming Erlang</a> (Book)</li>
+<li><a class="reference" href="http://www.trapexit.org/">trapexit.org</a> (Community)</li>
+<li><a class="reference" href="http://cean.process-one.net/">cean.process-one.net</a> (Packages)</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

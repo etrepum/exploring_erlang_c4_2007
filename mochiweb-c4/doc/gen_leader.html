@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module gen_leader</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module gen_leader</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Leader election behavior.
+
+<p><b>Authors:</b> Hans Svensson (<a href="mailto:hanssv@cs.chalmers.se"><tt>hanssv@cs.chalmers.se</tt></a>), Thomas Arts (<a href="mailto:thomas.arts@ituniv.se"><tt>thomas.arts@ituniv.se</tt></a>), Ulf Wiger (<a href="mailto:ulf.wiger@ericsson.com"><tt>ulf.wiger@ericsson.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>Leader election behavior.
+   <p>This application implements a leader election behavior modeled after
+   gen_server. This behavior intends to make it reasonably
+   straightforward to implement a fully distributed server with
+   master-slave semantics.</p>
+   <p>The gen_leader behavior supports nearly everything that gen_server
+   does (some functions, such as multicall() and the internal timeout,
+   have been removed), and adds a few callbacks and API functions to
+   support leader election etc.</p>
+   <p>Also included is an example program, a global dictionary, based
+   on the modules gen_leader and dict. The callback implementing the
+   global dictionary is called 'test_cb', for no particularly logical
+   reason.</p>
+   <p><b>New version:</b> The internal leader election algorithm was faulty
+   and has been replaced with a new version based on a different leader
+   election algorithm. As a consequence of this the query functions
+   <tt>alive</tt> and <tt>down</tt> can no longer be provided.
+   The new algorithm also make use of an incarnation parameter, by
+   default written to disk in the function <tt>incarnation</tt>. This
+   implies that only one <tt>gen_leader</tt> per node is permitted, if
+   used in a diskless environment, <tt>incarnation</tt> must be adapted.
+   </p>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-callerRef">callerRef()</a></h3>
+<p><tt>callerRef() = {pid(), reference()}</tt></p>
+<p>See gen_server.
+  </p>
+
+<h3 class="typedecl"><a name="type-election">election()</a></h3>
+<p><tt>election() = tuple()</tt></p>
+<p>Opaque state of the gen_leader behaviour.</p>
+
+<h3 class="typedecl"><a name="type-name">name()</a></h3>
+<p><tt>name() = atom()</tt></p>
+<p>A locally registered name.</p>
+
+<h3 class="typedecl"><a name="type-node">node()</a></h3>
+<p><tt>node() = atom()</tt></p>
+<p>A node name.</p>
+
+<h3 class="typedecl"><a name="type-serverRef">serverRef()</a></h3>
+<p><tt>serverRef() = Name | {<a href="#type-name">name()</a>, <a href="#type-node">node()</a>} | {global, Name} | pid()</tt></p>
+<p>See gen_server.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#call-2">call/2</a></td><td>Equivalent to <code>gen_server:call/2</code>, but with a slightly
+  different exit reason if something goes wrong.</td></tr>
+<tr><td valign="top"><a href="#call-3">call/3</a></td><td>Equivalent to <code>gen_server:call/3</code>, but with a slightly
+  different exit reason if something goes wrong.</td></tr>
+<tr><td valign="top"><a href="#candidates-1">candidates/1</a></td><td>Returns a list of known candidates.</td></tr>
+<tr><td valign="top"><a href="#cast-2">cast/2</a></td><td>Equivalent to <tt>gen_server:cast / 2</tt>.
+</td></tr>
+<tr><td valign="top"><a href="#leader_call-2">leader_call/2</a></td><td>Makes a call (similar to <code>gen_server:call/2</code>) to the
+  leader.</td></tr>
+<tr><td valign="top"><a href="#leader_call-3">leader_call/3</a></td><td>Makes a call (similar to <code>gen_server:call/3</code>) to the
+  leader.</td></tr>
+<tr><td valign="top"><a href="#leader_cast-2">leader_cast/2</a></td><td>Similar to <code>gen_server:cast/2</code> but will be forwarded to
+  the leader via the local gen_leader instance.</td></tr>
+<tr><td valign="top"><a href="#reply-2">reply/2</a></td><td>Equivalent to <tt>gen_server:reply / 2</tt>.
+</td></tr>
+<tr><td valign="top"><a href="#start-6">start/6</a></td><td>Starts a gen_leader process without linking to the parent.</td></tr>
+<tr><td valign="top"><a href="#start_link-6">start_link/6</a></td><td>Starts a gen_leader process.</td></tr>
+<tr><td valign="top"><a href="#workers-1">workers/1</a></td><td>Returns a list of known workers.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="call-2">call/2</a></h3>
+<div class="spec">
+<p><tt>call(Name::<a href="#type-serverRef">serverRef()</a>, Request) -&gt; term()</tt></p>
+</div><p>Equivalent to <code>gen_server:call/2</code>, but with a slightly
+  different exit reason if something goes wrong. This function calls
+  the <code>gen_leader</code> process exactly as if it were a gen_server
+  (which, for practical purposes, it is.)</p>
+
+<h3 class="function"><a name="call-3">call/3</a></h3>
+<div class="spec">
+<p><tt>call(Name::<a href="#type-serverRef">serverRef()</a>, Request, Timeout::integer()) -&gt; Reply</tt>
+<ul class="definitions"><li><tt>Reply = term()</tt></li>
+</ul></p>
+</div><p>Equivalent to <code>gen_server:call/3</code>, but with a slightly
+  different exit reason if something goes wrong. This function calls
+  the <code>gen_leader</code> process exactly as if it were a gen_server
+  (which, for practical purposes, it is.)</p>
+
+<h3 class="function"><a name="candidates-1">candidates/1</a></h3>
+<div class="spec">
+<p><tt>candidates(E::<a href="#type-election">election()</a>) -&gt; [<a href="#type-node">node()</a>]</tt></p>
+</div><p>Returns a list of known candidates.
+ </p>
+
+<h3 class="function"><a name="cast-2">cast/2</a></h3>
+<div class="spec">
+<p><tt>cast() -&gt; term()</tt></p>
+</div><p>Equivalent to <tt>gen_server:cast / 2</tt>.</p>
+
+
+<h3 class="function"><a name="leader_call-2">leader_call/2</a></h3>
+<div class="spec">
+<p><tt>leader_call(Name::<a href="#type-name">name()</a>, Request::term()) -&gt; Reply</tt>
+<ul class="definitions"><li><tt>Reply = term()</tt></li>
+</ul></p>
+</div><p>Makes a call (similar to <code>gen_server:call/2</code>) to the
+  leader. The call is forwarded via the local gen_leader instance, if
+  that one isn't actually the leader. The client will exit if the
+  leader dies while the request is outstanding.
+  <p>This function uses <code>gen:call/3</code>, and is subject to the
+  same default timeout as e.g. <code>gen_server:call/2</code>.</p></p>
+
+<h3 class="function"><a name="leader_call-3">leader_call/3</a></h3>
+<div class="spec">
+<p><tt>leader_call(Name::<a href="#type-name">name()</a>, Request::term(), Timeout::integer()) -&gt; Reply</tt>
+<ul class="definitions"><li><tt>Reply = term()</tt></li>
+</ul></p>
+</div><p>Makes a call (similar to <code>gen_server:call/3</code>) to the
+  leader. The call is forwarded via the local gen_leader instance, if
+  that one isn't actually the leader. The client will exit if the
+  leader dies while the request is outstanding.</p>
+
+<h3 class="function"><a name="leader_cast-2">leader_cast/2</a></h3>
+<div class="spec">
+<p><tt>leader_cast(Name::<a href="#type-name">name()</a>, Msg::term()) -&gt; ok</tt></p>
+</div><p>Similar to <code>gen_server:cast/2</code> but will be forwarded to
+  the leader via the local gen_leader instance.</p>
+
+<h3 class="function"><a name="reply-2">reply/2</a></h3>
+<div class="spec">
+<p><tt>reply(From::<a href="#type-callerRef">callerRef()</a>, Reply::term()) -&gt; Void</tt></p>
+</div><p>Equivalent to <tt>gen_server:reply / 2</tt>.</p>
+
+
+<h3 class="function"><a name="start-6">start/6</a></h3>
+<div class="spec">
+<p><tt>start(Name::<a href="#type-node">node()</a>, CandidateNodes::[<a href="#type-node">node()</a>], Workers::[<a href="#type-node">node()</a>], Mod::atom(), Arg, Options::list()) -&gt; {ok, pid()}</tt></p>
+</div><p>Starts a gen_leader process without linking to the parent.
+ </p>
+
+<h3 class="function"><a name="start_link-6">start_link/6</a></h3>
+<div class="spec">
+<p><tt>start_link(Name::atom(), CandidateNodes::[atom()], Workers::[atom()], Mod::atom(), Arg, Options::list()) -&gt; {ok, pid()}</tt></p>
+</div><p>Starts a gen_leader process.
+  <table>
+   <tr><td>Name</td><td>The locally registered name of the process</td></tr>
+   <tr><td>CandidateNodes</td><td>The names of nodes capable of assuming
+      a leadership role</td></tr>
+   <tr><td>Workers</td>
+      <td>The names of nodes that will be part of the "cluster",
+          but cannot ever assume a leadership role.</td></tr>
+   <tr><td>Mod</td><td>The name of the callback module</td></tr>
+   <tr><td>Arg</td><td>Argument passed on to <code>Mod:init/1</code></td></tr>
+   <tr><td>Options</td><td>Same as gen_server's Options</td></tr>
+  </table>
+ 
+  <p>The list of candidates needs to be known from the start. Workers
+  can be added at runtime.</p></p>
+
+<h3 class="function"><a name="workers-1">workers/1</a></h3>
+<div class="spec">
+<p><tt>workers(E::<a href="#type-election">election()</a>) -&gt; [<a href="#type-node">node()</a>]</tt></p>
+</div><p>Returns a list of known workers.
+ </p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Aug 9 2007, 13:19:58.</i></p>
+</body>
+</html>

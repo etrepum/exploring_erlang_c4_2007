@@ -1,0 +1,82 @@
+#!/bin/sh -
+
+vim=${VIMCMD-vim}
+
+# colorize - create a .html version of a text file with vim gui syntax coloring
+# Steve Kinzler, kinzler@cs.indiana.edu, Dec 98/May 00
+# http://www.cs.indiana.edu/~kinzler/home.html#web
+
+# Bugs: vim's 2html can screw up when there's control characters in the
+#       input file, eg <C-A>
+
+bad=; f=; s=on; bg=; scheme=
+
+while :
+do
+	case $# in
+	0)	break;;
+	*)	case "$1" in
+		-f)	f=f;;
+		-s)	s=off;;
+		-d)	bg='se bg=dark|';;
+		-l)	bg='se bg=light|';;
+		-c)	shift; scheme="$1";;
+
+		--)	shift; break;;
+		-h)	bad=t;;
+		-)	break;;
+		-*)	bad=t; echo "$0: unknown option ($1)" 1>&2;;
+		*)	break;;
+		esac
+		shift;;
+	esac
+done
+
+case $# in
+1)	test "$1" = - -o -r "$1" ||
+		{ echo "$0: no such file ($1)" 1>&2; bad=t; }
+	in="$1";;
+*)	bad=t;;
+esac
+
+set `$vim -version 2>&1 | sed 's/\( [0-9][0-9]*\.[0-9][0-9]*\).*/\1/
+			       s/.* //; s/\./ /g; 1q'` 0 0
+vers=`expr $1 \* 100 + $2`
+test $vers -lt 502 && { echo "$0: vim ($vim) version < 502 ($vers)" 1>&2;
+			exit 4; }
+
+case "$bad" in
+?*)	cat << EOF 1>&2
+usage: $0 [ -f ] [ -s ] [ -d | -l ] [ -c name ] { file | - }
+file.html or Untitled.html is created which includes vim gui syntax coloring
+	-f	overwrite an existing file.html
+	-s	suppress syntax coloring/highlighting
+	-d	use a dark background
+	-l	use a light background
+	-c	use the given vim color scheme
+EOF
+	exit 1;;
+esac
+
+case "$in" in
+-)	out=Untitled.html;;
+*)	out="$in.html";;
+esac
+test "$f" = '' -a \( -f "$out" -o -d "$out" \) &&
+	{ echo "$0: output file already exists ($out)" 1>&2; exit 2; }
+>> "$out" || exit 3
+
+case "$in" in
+-)	ddash=;;
+*)	ddash=--;;
+esac
+
+syndir=VIMRUNTIME
+test $vers -lt 504 && syndir=VIM
+
+case "$scheme" in
+?*)	scheme="|so \$$syndir/colors/$scheme.vim";;
+esac
+
+$vim -c "${bg}syn $s$scheme|so \$$syndir/syntax/2html.vim|w|qa!" $ddash "$in" \
+	2>&1 > /dev/null | grep -v 'not.* a terminal'

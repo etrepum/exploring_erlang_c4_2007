@@ -1,0 +1,11 @@
+body {text-align:left; font:9px verdana, arial, san-serif}
+p {font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:9px; color:#333333; line-height: 12px}
+span, div {padding:0px; margin:0px}
+img {border:0px}
+.copy {font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:9px; color:#333333; line-height: 12px;}
+table {margin: 0px; border:0px;}
+tr {vertical-align:top;}
+td {vertical-align:top; font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:9px; color:#333333; line-height: 12px;}
+.title {font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:16px; color:#333333; line-height: 19px}
+.project {font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:11px; color:#333333; line-height: 14px}
+.smaller {font-family:Verdana, Geneva, Arial; text-decoration:none; font-size:9px; color:#999999; line-height: 14px}
